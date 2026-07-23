@@ -23,11 +23,25 @@ function colorForCharge(charge, maxAbs) {
 
 const CHARGE_BASE_RADIUS = 0.22;
 const CHARGE_RADIUS_SCALE = 0.9;
-const CHARGE_OVERLAY_ALPHA = 0.5;
 
 function radiusForCharge(charge, maxAbs) {
   const norm = maxAbs > 0 ? Math.abs(charge) / maxAbs : 0;
   return CHARGE_BASE_RADIUS + CHARGE_RADIUS_SCALE * norm;
+}
+
+// --- Molecular formula (Hill notation) + total charge ------------------------
+function molFormula(atoms) {
+  const counts = {};
+  atoms.forEach((a) => { counts[a.element] = (counts[a.element] || 0) + 1; });
+  const rest = Object.keys(counts).filter((e) => e !== 'C' && e !== 'H').sort();
+  const order = counts.C ? ['C', ...(counts.H ? ['H'] : []), ...rest] : Object.keys(counts).sort();
+  return order.map((e) => (counts[e] === 1 ? e : e + counts[e])).join('');
+}
+
+function totalChargeStr(atoms) {
+  const sum = atoms.reduce((s, a) => s + a.charge, 0);
+  const sign = sum < 0 ? '-' : '+';
+  return `Σq = ${sign}${Math.abs(sum).toFixed(3)}`;
 }
 
 const STICK_RADIUS = 0.13;
@@ -43,6 +57,9 @@ let labelsOn = true;
 let highlightShape = null;
 let activeRowIdx = null;
 let chargeShapes = []; // semi-transparent overlay spheres shown in charge mode
+let chargeAlpha = 0.72;
+let chargeScale = 1.0;
+let whiteBg = false;
 
 const el = {
   select: document.getElementById('molecule-select'),
@@ -52,6 +69,10 @@ const el = {
   modeSeg: document.getElementById('mode-segmented'),
   labelToggle: document.getElementById('label-toggle'),
   tableBody: document.getElementById('atom-table-body'),
+  molInfo: document.getElementById('mol-info'),
+  bgToggle: document.getElementById('bg-toggle'),
+  chargeSizeInput: document.getElementById('charge-size'),
+  chargeAlphaInput: document.getElementById('charge-alpha'),
 };
 
 function initViewer() {
@@ -73,14 +94,19 @@ function maxAbsCharge(atoms) {
 function applyStyle() {
   const model = viewer.getModel();
   if (!model) return;
-  const elemBySerial = {};
-  currentParsed.atoms.forEach((p) => { elemBySerial[p.id] = p.element; });
-  model.selectedAtoms({}).forEach((a) => {
-    if (elemBySerial[a.serial]) a.elem = elemBySerial[a.serial];
+  // selectedAtoms({}) returns atoms in file order, matching currentParsed.atoms,
+  // so fix up .elem positionally (serial mapping is unreliable here).
+  const glAtoms = model.selectedAtoms({});
+  glAtoms.forEach((a, i) => {
+    const p = currentParsed.atoms[i];
+    if (p) a.elem = p.element;
   });
+  // Use the explicit {prop,map} form: the bare 'Jmol' string does not re-color
+  // atoms whose parse-time element was wrong, so pass the element->color map directly.
+  const scheme = { prop: 'elem', map: $3Dmol.elementColors.Jmol };
   viewer.setStyle({}, {
-    stick: { radius: STICK_RADIUS, colorscheme: 'Jmol' },
-    sphere: { scale: SPHERE_SCALE, colorscheme: 'Jmol' },
+    stick: { radius: STICK_RADIUS, colorscheme: scheme },
+    sphere: { scale: SPHERE_SCALE, colorscheme: scheme },
   });
 }
 
@@ -97,9 +123,9 @@ function applyChargeOverlay() {
   currentParsed.atoms.forEach((p) => {
     chargeShapes.push(viewer.addSphere({
       center: { x: p.x, y: p.y, z: p.z },
-      radius: radiusForCharge(p.charge, maxAbs),
+      radius: radiusForCharge(p.charge, maxAbs) * chargeScale,
       color: colorForCharge(p.charge, maxAbs),
-      alpha: CHARGE_OVERLAY_ALPHA,
+      alpha: chargeAlpha,
     }));
   });
 }
@@ -187,6 +213,7 @@ function renderMolecule(text, name) {
   viewer.zoomTo();
   viewer.render();
   buildTable(currentParsed);
+  el.molInfo.textContent = `${molFormula(currentParsed.atoms)} · ${totalChargeStr(currentParsed.atoms)}`;
   el.viewerContainer.classList.remove('empty');
 }
 
@@ -197,6 +224,7 @@ function showEmptyState() {
   if (viewer.getModel()) viewer.clear();
   viewer.render();
   el.tableBody.innerHTML = '';
+  el.molInfo.textContent = '';
   el.viewerContainer.classList.add('empty');
 }
 
@@ -275,6 +303,28 @@ function initControls() {
     labelsOn = el.labelToggle.checked;
     applyLabels();
     viewer.render();
+  });
+
+  el.bgToggle.addEventListener('change', () => {
+    whiteBg = el.bgToggle.checked;
+    viewer.setBackgroundColor(whiteBg ? 0xffffff : 0x1a1e28);
+    viewer.render();
+  });
+
+  el.chargeSizeInput.addEventListener('input', () => {
+    chargeScale = parseFloat(el.chargeSizeInput.value);
+    if (mode === 'charge') {
+      applyChargeOverlay();
+      viewer.render();
+    }
+  });
+
+  el.chargeAlphaInput.addEventListener('input', () => {
+    chargeAlpha = parseFloat(el.chargeAlphaInput.value);
+    if (mode === 'charge') {
+      applyChargeOverlay();
+      viewer.render();
+    }
   });
 
   const dz = el.viewerContainer;

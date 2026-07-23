@@ -33,6 +33,7 @@
           </label>
           <button type="button" class="file-btn" id="remove-btn">Remove</button>
         </div>
+        <div id="mol-info" class="mol-info"></div>
       </div>
 
       <div class="panel-section">
@@ -48,6 +49,26 @@
           <input type="checkbox" id="label-toggle" checked>
           <span>Labels</span>
         </label>
+      </div>
+
+      <div class="panel-section">
+        <details id="advanced">
+          <summary>Advanced options</summary>
+          <div class="adv-control">
+            <label class="toggle">
+              <input type="checkbox" id="bg-toggle">
+              <span>White background</span>
+            </label>
+          </div>
+          <div class="adv-control">
+            <label class="panel-label" for="charge-size">Charge sphere size</label>
+            <input type="range" id="charge-size" min="0.3" max="2.5" step="0.1" value="1">
+          </div>
+          <div class="adv-control">
+            <label class="panel-label" for="charge-alpha">Charge opacity</label>
+            <input type="range" id="charge-alpha" min="0.2" max="1" step="0.05" value="0.72">
+          </div>
+        </details>
       </div>
 
       <div class="panel-section" id="table-section">
