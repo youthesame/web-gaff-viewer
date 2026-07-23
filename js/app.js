@@ -59,8 +59,10 @@ let activeRowIdx = null;
 let chargeShapes = []; // semi-transparent overlay spheres shown in charge mode
 const CHARGE_ALPHA_DEFAULT = 0.7;
 const CHARGE_SCALE_DEFAULT = 1.0;
+const LABEL_SIZE_DEFAULT = 11;
 let chargeAlpha = CHARGE_ALPHA_DEFAULT;
 let chargeScale = CHARGE_SCALE_DEFAULT;
+let labelSize = LABEL_SIZE_DEFAULT;
 let whiteBg = false;
 
 const el = {
@@ -75,6 +77,7 @@ const el = {
   bgToggle: document.getElementById('bg-toggle'),
   chargeSizeInput: document.getElementById('charge-size'),
   chargeAlphaInput: document.getElementById('charge-alpha'),
+  labelSizeInput: document.getElementById('label-size'),
 };
 
 function initViewer() {
@@ -139,7 +142,7 @@ function applyLabels() {
       const text = mode === 'gaff' ? p.gaffType : p.charge.toFixed(Math.abs(p.charge) < 0.1 ? 3 : 2);
       viewer.addLabel(text, {
         position: { x: p.x, y: p.y, z: p.z },
-        fontSize: 11,
+        fontSize: labelSize,
         fontColor: 'white',
         backgroundColor: 'black',
         backgroundOpacity: 0.55,
@@ -327,6 +330,12 @@ function initControls() {
       applyChargeOverlay();
       viewer.render();
     }
+  });
+
+  el.labelSizeInput.addEventListener('input', () => {
+    labelSize = parseInt(el.labelSizeInput.value, 10);
+    applyLabels();
+    viewer.render();
   });
 
   const dz = el.viewerContainer;

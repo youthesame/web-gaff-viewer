@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAFF Viewer</title>
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=8">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
 </head>
 <body>
@@ -61,6 +61,13 @@
             </label>
           </div>
           <div class="adv-control">
+            <label class="panel-label" for="label-size">Label size</label>
+            <div class="slider-wrap">
+              <input type="range" id="label-size" min="8" max="28" step="1" value="11">
+              <span class="slider-default" style="left: calc(8px + (100% - 16px) * 0.15)" title="default"></span>
+            </div>
+          </div>
+          <div class="adv-control">
             <label class="panel-label" for="charge-size">Charge sphere size</label>
             <div class="slider-wrap">
               <input type="range" id="charge-size" min="0.3" max="2.5" step="0.1" value="1">
@@ -98,6 +105,6 @@
   </main>
 </div>
 
-<script type="module" src="js/app.js?v=7"></script>
+<script type="module" src="js/app.js?v=8"></script>
 </body>
 </html>
