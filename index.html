@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAFF Viewer</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=7">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
 </head>
 <body>
@@ -62,14 +62,17 @@
           </div>
           <div class="adv-control">
             <label class="panel-label" for="charge-size">Charge sphere size</label>
-            <input type="range" id="charge-size" min="0.3" max="2.5" step="0.1" value="1">
+            <div class="slider-wrap">
+              <input type="range" id="charge-size" min="0.3" max="2.5" step="0.1" value="1">
+              <span class="slider-default" style="left: calc(8px + (100% - 16px) * 0.318)" title="default"></span>
+            </div>
           </div>
           <div class="adv-control">
             <label class="panel-label" for="charge-alpha">Charge opacity</label>
-            <input type="range" id="charge-alpha" min="0.2" max="1" step="0.05" value="0.72">
-          </div>
-          <div class="adv-control">
-            <button type="button" class="file-btn" id="charge-reset">Reset charge sliders</button>
+            <div class="slider-wrap">
+              <input type="range" id="charge-alpha" min="0.2" max="1" step="0.05" value="0.7">
+              <span class="slider-default" style="left: calc(8px + (100% - 16px) * 0.625)" title="default"></span>
+            </div>
           </div>
         </details>
       </div>
@@ -95,6 +98,6 @@
   </main>
 </div>
 
-<script type="module" src="js/app.js"></script>
+<script type="module" src="js/app.js?v=7"></script>
 </body>
 </html>

@@ -229,6 +229,25 @@ details#advanced[open] summary {
 .adv-control input[type="range"] {
   accent-color: var(--accent);
   width: 100%;
+  display: block;
+}
+
+/* Wrapper + tick marking the slider's default value, for easy return. */
+.slider-wrap {
+  position: relative;
+  padding-bottom: 9px;
+}
+
+.slider-default {
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: 7px;
+  background: var(--accent);
+  border-radius: 1px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0.85;
 }
 
 .toggle {
