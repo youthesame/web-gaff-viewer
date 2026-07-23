@@ -45,12 +45,6 @@ html, body {
   letter-spacing: 0.02em;
 }
 
-.subtitle {
-  margin: 0.15rem 0 0;
-  font-size: 0.78rem;
-  color: var(--text-dim);
-}
-
 #main {
   flex: 1 1 auto;
   min-height: 0;
@@ -95,6 +89,22 @@ html, body {
   opacity: 1;
 }
 
+#empty-state {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 1rem;
+}
+
+#viewer-container.empty #empty-state {
+  display: flex;
+}
+
 #side-panel {
   flex: 0 0 340px;
   width: 340px;
@@ -133,9 +143,14 @@ html, body {
   margin-bottom: 0.5rem;
 }
 
+.btn-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .file-btn {
   display: block;
-  width: 100%;
+  flex: 1 1 0;
   text-align: center;
   padding: 0.4rem 0.5rem;
   background: transparent;
@@ -143,6 +158,7 @@ html, body {
   border: 1px solid var(--accent-dim);
   border-radius: 6px;
   font-size: 0.82rem;
+  font-family: inherit;
   cursor: pointer;
   transition: background 0.12s ease;
 }
