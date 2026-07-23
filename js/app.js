@@ -57,8 +57,10 @@ let labelsOn = true;
 let highlightShape = null;
 let activeRowIdx = null;
 let chargeShapes = []; // semi-transparent overlay spheres shown in charge mode
-let chargeAlpha = 0.72;
-let chargeScale = 1.0;
+const CHARGE_ALPHA_DEFAULT = 0.72;
+const CHARGE_SCALE_DEFAULT = 1.0;
+let chargeAlpha = CHARGE_ALPHA_DEFAULT;
+let chargeScale = CHARGE_SCALE_DEFAULT;
 let whiteBg = false;
 
 const el = {
@@ -73,6 +75,7 @@ const el = {
   bgToggle: document.getElementById('bg-toggle'),
   chargeSizeInput: document.getElementById('charge-size'),
   chargeAlphaInput: document.getElementById('charge-alpha'),
+  chargeReset: document.getElementById('charge-reset'),
 };
 
 function initViewer() {
@@ -321,6 +324,17 @@ function initControls() {
 
   el.chargeAlphaInput.addEventListener('input', () => {
     chargeAlpha = parseFloat(el.chargeAlphaInput.value);
+    if (mode === 'charge') {
+      applyChargeOverlay();
+      viewer.render();
+    }
+  });
+
+  el.chargeReset.addEventListener('click', () => {
+    chargeScale = CHARGE_SCALE_DEFAULT;
+    chargeAlpha = CHARGE_ALPHA_DEFAULT;
+    el.chargeSizeInput.value = CHARGE_SCALE_DEFAULT;
+    el.chargeAlphaInput.value = CHARGE_ALPHA_DEFAULT;
     if (mode === 'charge') {
       applyChargeOverlay();
       viewer.render();
